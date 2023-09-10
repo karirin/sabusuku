@@ -7,18 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E2927681CFC3532AECE36AC /* Pods_sabusuku.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C046E129300A9C5914500D /* Pods_sabusuku.framework */; };
+		2669E4882AA775470088043E /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2669E4872AA775470088043E /* AuthManager.swift */; };
+		2669E48A2AA783DA0088043E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2669E4892AA783D90088043E /* GoogleService-Info.plist */; };
+		2669E48C2AA7869F0088043E /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2669E48B2AA7869F0088043E /* SubscriptionView.swift */; };
 		26BD44872AA7736800C52D0D /* sabusukuApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BD44862AA7736800C52D0D /* sabusukuApp.swift */; };
 		26BD44892AA7736800C52D0D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BD44882AA7736800C52D0D /* ContentView.swift */; };
 		26BD448B2AA7736B00C52D0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26BD448A2AA7736B00C52D0D /* Assets.xcassets */; };
 		26BD448E2AA7736B00C52D0D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26BD448D2AA7736B00C52D0D /* Preview Assets.xcassets */; };
+		26C629392AAC839D0054C937 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C629362AAC839C0054C937 /* SettingView.swift */; };
+		26C6293A2AAC839D0054C937 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C629372AAC839D0054C937 /* PrivacyView.swift */; };
+		26C6293B2AAC839D0054C937 /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C629382AAC839D0054C937 /* TermsOfServiceView.swift */; };
+		26C6293D2AAC99B20054C937 /* SubscriptionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C6293C2AAC99B20054C937 /* SubscriptionDetailView.swift */; };
+		26CD57292AA89D2B00C76EF2 /* SubscriptionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CD57282AA89D2B00C76EF2 /* SubscriptionListView.swift */; };
+		26CD572D2AAA0E6500C76EF2 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CD572C2AAA0E6500C76EF2 /* PieChartView.swift */; };
+		26CD572F2AAA29AC00C76EF2 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CD572E2AAA29AC00C76EF2 /* CalendarView.swift */; };
+		26D2693B2AAC2C8C002902B0 /* PaymentHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26D2693A2AAC2C8C002902B0 /* PaymentHistoryView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0CFF6E5A2EEEDC0F1090F9F1 /* Pods-sabusuku.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sabusuku.debug.xcconfig"; path = "Target Support Files/Pods-sabusuku/Pods-sabusuku.debug.xcconfig"; sourceTree = "<group>"; };
+		12C046E129300A9C5914500D /* Pods_sabusuku.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_sabusuku.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2669E4872AA775470088043E /* AuthManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		2669E4892AA783D90088043E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2669E48B2AA7869F0088043E /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
 		26BD44832AA7736800C52D0D /* sabusuku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sabusuku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		26BD44862AA7736800C52D0D /* sabusukuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sabusukuApp.swift; sourceTree = "<group>"; };
 		26BD44882AA7736800C52D0D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		26BD448A2AA7736B00C52D0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		26BD448D2AA7736B00C52D0D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		26C629362AAC839C0054C937 /* SettingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
+		26C629372AAC839D0054C937 /* PrivacyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
+		26C629382AAC839D0054C937 /* TermsOfServiceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
+		26C6293C2AAC99B20054C937 /* SubscriptionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionDetailView.swift; sourceTree = "<group>"; };
+		26CD57282AA89D2B00C76EF2 /* SubscriptionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListView.swift; sourceTree = "<group>"; };
+		26CD572C2AAA0E6500C76EF2 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
+		26CD572E2AAA29AC00C76EF2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		26D2693A2AAC2C8C002902B0 /* PaymentHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentHistoryView.swift; sourceTree = "<group>"; };
+		3F5280F21CEEC690A3166238 /* Pods-sabusuku.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sabusuku.release.xcconfig"; path = "Target Support Files/Pods-sabusuku/Pods-sabusuku.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E2927681CFC3532AECE36AC /* Pods_sabusuku.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37,6 +64,8 @@
 			children = (
 				26BD44852AA7736800C52D0D /* sabusuku */,
 				26BD44842AA7736800C52D0D /* Products */,
+				DAA1B1F9CD408D18A49630AE /* Pods */,
+				567C71F7386056DB58B8AB2A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -53,7 +82,18 @@
 			children = (
 				26BD44862AA7736800C52D0D /* sabusukuApp.swift */,
 				26BD44882AA7736800C52D0D /* ContentView.swift */,
+				2669E48B2AA7869F0088043E /* SubscriptionView.swift */,
+				26CD572C2AAA0E6500C76EF2 /* PieChartView.swift */,
+				26CD572E2AAA29AC00C76EF2 /* CalendarView.swift */,
+				26CD57282AA89D2B00C76EF2 /* SubscriptionListView.swift */,
+				26C6293C2AAC99B20054C937 /* SubscriptionDetailView.swift */,
+				26D2693A2AAC2C8C002902B0 /* PaymentHistoryView.swift */,
+				2669E4872AA775470088043E /* AuthManager.swift */,
+				26C629372AAC839D0054C937 /* PrivacyView.swift */,
+				26C629362AAC839C0054C937 /* SettingView.swift */,
+				26C629382AAC839D0054C937 /* TermsOfServiceView.swift */,
 				26BD448A2AA7736B00C52D0D /* Assets.xcassets */,
+				2669E4892AA783D90088043E /* GoogleService-Info.plist */,
 				26BD448C2AA7736B00C52D0D /* Preview Content */,
 			);
 			path = sabusuku;
@@ -67,6 +107,23 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		567C71F7386056DB58B8AB2A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				12C046E129300A9C5914500D /* Pods_sabusuku.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DAA1B1F9CD408D18A49630AE /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0CFF6E5A2EEEDC0F1090F9F1 /* Pods-sabusuku.debug.xcconfig */,
+				3F5280F21CEEC690A3166238 /* Pods-sabusuku.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -74,9 +131,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 26BD44912AA7736B00C52D0D /* Build configuration list for PBXNativeTarget "sabusuku" */;
 			buildPhases = (
+				CF1608B323B16219BBBF0DB9 /* [CP] Check Pods Manifest.lock */,
 				26BD447F2AA7736800C52D0D /* Sources */,
 				26BD44802AA7736800C52D0D /* Frameworks */,
 				26BD44812AA7736800C52D0D /* Resources */,
+				D667E6843C51E0C474944A0A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -126,19 +185,72 @@
 			buildActionMask = 2147483647;
 			files = (
 				26BD448E2AA7736B00C52D0D /* Preview Assets.xcassets in Resources */,
+				2669E48A2AA783DA0088043E /* GoogleService-Info.plist in Resources */,
 				26BD448B2AA7736B00C52D0D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		CF1608B323B16219BBBF0DB9 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-sabusuku-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D667E6843C51E0C474944A0A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-sabusuku/Pods-sabusuku-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-sabusuku/Pods-sabusuku-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sabusuku/Pods-sabusuku-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		26BD447F2AA7736800C52D0D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26CD572D2AAA0E6500C76EF2 /* PieChartView.swift in Sources */,
+				26C6293B2AAC839D0054C937 /* TermsOfServiceView.swift in Sources */,
+				26CD57292AA89D2B00C76EF2 /* SubscriptionListView.swift in Sources */,
+				26CD572F2AAA29AC00C76EF2 /* CalendarView.swift in Sources */,
+				26C629392AAC839D0054C937 /* SettingView.swift in Sources */,
 				26BD44892AA7736800C52D0D /* ContentView.swift in Sources */,
+				2669E4882AA775470088043E /* AuthManager.swift in Sources */,
+				2669E48C2AA7869F0088043E /* SubscriptionView.swift in Sources */,
+				26D2693B2AAC2C8C002902B0 /* PaymentHistoryView.swift in Sources */,
 				26BD44872AA7736800C52D0D /* sabusukuApp.swift in Sources */,
+				26C6293D2AAC99B20054C937 /* SubscriptionDetailView.swift in Sources */,
+				26C6293A2AAC839D0054C937 /* PrivacyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +373,7 @@
 		};
 		26BD44922AA7736B00C52D0D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0CFF6E5A2EEEDC0F1090F9F1 /* Pods-sabusuku.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -290,6 +403,7 @@
 		};
 		26BD44932AA7736B00C52D0D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F5280F21CEEC690A3166238 /* Pods-sabusuku.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
