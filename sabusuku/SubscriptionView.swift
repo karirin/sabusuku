@@ -26,6 +26,7 @@ struct SubscriptionView: View {
     @State private var autoRenew: Bool = true
     @State private var notes: String = ""
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @ObservedObject var authManager = AuthManager.shared
 
     // サブスクリプションの期間の選択肢
     let durations = Array(1...12)  // 1ヶ月から12ヶ月までの配列
@@ -82,7 +83,7 @@ struct SubscriptionView: View {
 //                            "autoRenew": newSubscription.autoRenew,
 //                            "notes": newSubscription.notes
 //                        ]
-//                        
+//
 //                        ref.child("subscriptions").child(newSubscription.id.uuidString).setValue(subscriptionDict)
 //                    }
                     
@@ -101,10 +102,10 @@ struct SubscriptionView: View {
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("登録") {
-                            //                        guard let userId = self.authManager.user?.uid else {
-                            //                            print("ユーザーIDが取得できませんでした")
-                            //                            return
-                            //                        }
+                            guard let userId = self.authManager.currentUserId else {
+                                                print("ユーザーIDが取得できませんでした")
+                                                return
+                                            }
                             
                             let newSubscription = Subscription(serviceName: serviceName, monthlyFee: monthlyFee, paymentDate: paymentDate, duration: "\(duration)ヶ月", autoRenew: autoRenew, notes: notes)
                             let ref = Database.database().reference()
@@ -115,10 +116,13 @@ struct SubscriptionView: View {
                                 "paymentDate": "\(newSubscription.paymentDate)",
                                 "duration": newSubscription.duration,
                                 "autoRenew": newSubscription.autoRenew,
-                                "notes": newSubscription.notes
+                                "notes": newSubscription.notes,
+                                "userId": userId
                             ]
                             
                             ref.child("subscriptions").child(newSubscription.id.uuidString).setValue(subscriptionDict)
+                            
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                     }
                 }

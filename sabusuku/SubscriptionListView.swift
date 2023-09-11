@@ -8,10 +8,27 @@
 import SwiftUI
 import Firebase
 
+struct Subscription: Identifiable {
+    var id = UUID()
+    var serviceName: String
+    var monthlyFee: Int
+    var paymentDate: Date
+    var duration: String
+    var autoRenew: Bool
+    var notes: String
+    var paymentHistory: [Date] = []
+    var isSwiped: Bool = false
+}
+
 struct SubscriptionListView: View {
     @State private var subscriptions: [Subscription] = []
     @State private var hasNewPaymentHistory: Bool = false
     @State var showAnotherView_post: Bool = false
+    @ObservedObject var authManager = AuthManager.shared
+    @State private var showingDeleteAlert = false
+    @State private var selectedSubscription: Subscription?
+    @State private var offset: CGFloat = 0
+    @State private var isSwiped: Bool = false
     
     func formattedDate(from date: Date) -> String {
         let formatter = DateFormatter()
@@ -20,6 +37,7 @@ struct SubscriptionListView: View {
     }
     
     var body: some View {
+        ZStack(alignment: .trailing) {
         NavigationView {
         ScrollView {
             VStack(alignment: .leading,spacing: 10) {
@@ -45,33 +63,67 @@ struct SubscriptionListView: View {
                                     }
                 }
                 .padding()
-                ForEach(subscriptions) { subscription in
-                    NavigationLink(destination: SubscriptionDetailView(subscription: subscription)) {
-                        VStack(alignment: .leading) {
-                            Text(subscription.serviceName)
-                                .font(.system(size: 30))
-                            HStack{
-                                Text("月額料金: \(subscription.monthlyFee)円")
-                                    .multilineTextAlignment(.leading)
-                                Text("支払い日: \(formattedDate(from: subscription.paymentDate))")
-                                
-                                //                        Text("期間: \(subscription.duration)")
-                                //                        Text("自動更新: \(subscription.autoRenew ? "有" : "無")")
-                                //                        Text("メモ: \(subscription.notes)")
+                ForEach(subscriptions.indices, id: \.self) { index in
+                    let subscription = subscriptions[index]
+                        ZStack(alignment: .trailing) {
+                        NavigationLink(destination: SubscriptionDetailView(subscription: subscription)) {
+                            VStack(alignment: .leading) {
+                                Text(subscription.serviceName)
+                                    .font(.system(size: 30))
+                                HStack{
+                                    Text("月額料金: \(subscription.monthlyFee)円")
+                                        .multilineTextAlignment(.leading)
+                                    Text("支払い日: \(formattedDate(from: subscription.paymentDate))")
+                                }
+                            }
+//                            .padding()
+                            .foregroundColor(.black)
+                            .frame(maxWidth: .infinity,alignment: .leading)
+                            .background(.white)
+                            .cornerRadius(8)
+                            .offset(x: self.subscriptions[index].isSwiped ? -100 : 0)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        if value.translation.width < 0 {
+                                            self.subscriptions[index].isSwiped = true
+                                        }
+                                    }
+                                    .onEnded { value in
+                                        if -value.translation.width > 100 {
+                                            self.subscriptions[index].isSwiped = true
+                                        } else {
+                                            self.subscriptions[index].isSwiped = false
+                                        }
+                                    }
+                            )
+                        }
+                            if self.subscriptions[index].isSwiped {
+                                Button(action: {
+                                    self.selectedSubscription = subscription
+                                    self.showingDeleteAlert = true
+                                }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.white)
+                                        .frame(width: 44, height: 44)
+                                        .background(Color.red)
+                                        .cornerRadius(22)
+                                }
+                                .frame(width: 100, height: 44)
+                                .transition(.move(edge: .trailing))
                             }
                         }
+                        
                         .padding()
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity,alignment: .leading)
-                        .background(.white)
-                        .cornerRadius(8)
-                    }
-                }.padding(.horizontal)
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 1)
+                }
+                .padding(.horizontal)
                     .padding(.vertical,5)
                     .shadow(radius: 1)
             }
         }
-        .onAppear(perform: loadData)
         .background(Color("sky"))
         .overlay(
             ZStack {
@@ -103,8 +155,25 @@ struct SubscriptionListView: View {
             }
         )
     }
-        
         .frame(maxWidth: .infinity)
+        }        .alert(isPresented: $showingDeleteAlert) {
+            Alert(title: Text("確認"),
+                  message: Text("\(selectedSubscription?.serviceName ?? "")を削除しますか？"),
+                  primaryButton: .destructive(Text("削除")) {
+                      if let subscription = self.selectedSubscription {
+                          deleteSubscription(subscription)
+                      }
+                  },
+                  secondaryButton: .cancel(Text("キャンセル")))
+        }
+        .onAppear(perform: loadData)
+    }
+    
+    func deleteSubscriptionAtIndex(at offsets: IndexSet) {
+        for index in offsets {
+            let subscription = subscriptions[index]
+            deleteSubscription(subscription)
+        }
     }
     
     func dateComponents(from duration: String) -> DateComponents? {
@@ -182,11 +251,30 @@ struct SubscriptionListView: View {
         }
     }
     
+    func deleteSubscription(_ subscription: Subscription) {
+        let ref = Database.database().reference().child("subscriptions").child(subscription.id.uuidString)
+        ref.removeValue { (error, _) in
+            if let error = error {
+                print("サブスクリプションの削除に失敗しました: \(error.localizedDescription)")
+            } else {
+                print("サブスクリプションを削除しました!")
+                if let index = self.subscriptions.firstIndex(where: { $0.id == subscription.id }) {
+                    self.subscriptions.remove(at: index)
+                }
+            }
+        }
+    }
+    
     func loadData() {
+        guard let userId = self.authManager.currentUserId else {
+            print("ユーザーIDが取得できませんでした")
+            return
+        }
+        
         let ref = Database.database().reference().child("subscriptions")
         ref.observe(.value) { snapshot in
             var loadedSubscriptions: [Subscription] = []
-            
+
             let currentDate = Date()
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -196,9 +284,11 @@ struct SubscriptionListView: View {
                 if let childSnapshot = child as? DataSnapshot,
                    let dict = childSnapshot.value as? [String: Any],
                    let id = UUID(uuidString: childSnapshot.key),
-                   let subscription = Subscription(from: dict, id: id) {
+                   let subscription = Subscription(from: dict, id: id),
+                   let subscriptionUserId = dict["userId"] as? String, // userIdを取得
+                   subscriptionUserId == userId { // userIdが現在のユーザーIDと一致するか確認
                     
-                    loadedSubscriptions.append(subscription) // すべてのサブスクリプションを追加
+                    loadedSubscriptions.append(subscription) // 一致するサブスクリプションを追加
                     
                     if let lastUpdatedDate = dict["lastUpdatedDate"] as? String, lastUpdatedDate == currentDateString {
                         hasNewPaymentHistory = true // 新規の支払い履歴が存在する場合に変数を更新
@@ -211,6 +301,7 @@ struct SubscriptionListView: View {
             }
         }
     }
+
 
 }
 

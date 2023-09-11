@@ -15,7 +15,7 @@ struct ContentView: View {
             TabView {
                 ZStack {
                     SubscriptionListView()
-                        .background(Color("Color"))
+                        .background(Color("sky"))
                 }
                 .tabItem {
                     Image(systemName: "house")

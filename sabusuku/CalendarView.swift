@@ -9,17 +9,6 @@ import SwiftUI
 import Firebase
 import FSCalendar
 
-struct Subscription: Identifiable {
-    var id = UUID()
-    var serviceName: String
-    var monthlyFee: Int
-    var paymentDate: Date
-    var duration: String
-    var autoRenew: Bool
-    var notes: String
-    var paymentHistory: [Date] = []
-}
-
 struct CalendarView: UIViewRepresentable {
     typealias UIViewType = FSCalendar
 

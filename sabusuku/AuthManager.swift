@@ -8,6 +8,12 @@
 import SwiftUI
 import Firebase
 
+extension AuthManager {
+    var currentUserId: String? {
+        return user?.uid
+    }
+}
+
 class AuthManager: ObservableObject {
     @Published var user: User?
 
