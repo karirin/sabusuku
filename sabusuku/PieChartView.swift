@@ -13,16 +13,31 @@ struct SubscriptionGraphView: View {
     @State private var subscriptions: [Subscription] = []
     @State private var currentDate: Date = Date() // 現在の日付を保持する変数
     @State private var filteredSubscriptions: [Subscription] = []
+    @State private var totalAmount: Int = 0
+    let selectedDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy年MM月" // 例: 2023年08月22日
+        return formatter
+    }()
 
     var body: some View {
         VStack {
-            // 年月の表示
-            Text("\(formattedDate(date: currentDate))")
-                .font(.title)
-                .padding()
-                .onChange(of: currentDate) { _ in
-                    filterSubscriptionsByDate()
-                }
+            HStack{
+                Text("")
+                Spacer()
+                // 年月の表示
+                Text("\(selectedDateFormatter.string(from: currentDate))")
+                    .font(.system(size: 20))
+                    .foregroundColor(.white)
+                    .padding()
+                    .onChange(of: currentDate) { _ in
+                        filterSubscriptionsByDate()
+                    }
+                Spacer()
+                Text("")
+            }
+            .frame(maxWidth:.infinity,maxHeight:60)
+            .background(Color("plus"))
             
             if subscriptions.isEmpty {
                 Text("データを読み込んでいます...")
@@ -32,27 +47,68 @@ struct SubscriptionGraphView: View {
                             filterSubscriptionsByDate()
                         }
                     }
+            } else if filteredSubscriptions.isEmpty {
+                VStack{
+                    Text("\(selectedDateFormatter.string(from: currentDate))にはデータがありません")
+                        .font(.system(size: 20))
+                        .foregroundColor(.gray)
+                        .padding()
+                }.frame(maxWidth:.infinity,maxHeight:.infinity)
             } else {
                 PieChartView1(data: createChartData(subscriptions: subscriptions))
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(filteredSubscriptions, id: \.serviceName) { subscription in
-                        HStack {
-                            Text(subscription.serviceName)
-                                .font(.headline)
+                ScrollView{
+                    VStack(alignment: .leading,spacing: 5) {
+                        HStack{
+                            Image(systemName: "calendar")
+                                .foregroundColor(Color("red"))
+                                .font(.system(size: 25))
+                            Text("\(selectedDateFormatter.string(from: currentDate))")
+                                .font(.system(size: 25))
                             Spacer()
-                            Text("\(subscription.monthlyFee)円")
-                                .font(.subheadline)
+                            Text("合計: \(totalAmount)")
+                                .font(.system(size: 25))
+                            HStack(alignment: .bottom){
+                                Text("円")
+                                    .padding(.top,5)
+                                    .font(.system(size: 15))
+                            }
+                        }
+                        .font(.system(size: 20))
+                        .foregroundColor(Color("fontGray"))
+                        .padding(.top, 10)
+                        .padding(.horizontal)
+                        Divider()
+                        ForEach(filteredSubscriptions, id: \.serviceName) { subscription in
+                            HStack {
+                                Text(subscription.serviceName)
+                                    .font(.system(size: 22))
+                                Spacer()
+                                Image(systemName: "yensign.circle")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(Color("plus"))
+                                    Text("\(subscription.monthlyFee)")
+                                        .font(.system(size: 25))
+                                HStack(alignment: .bottom){
+                                    Text("円")
+                                        .padding(.top,5)
+                                        .font(.system(size: 15))
+                                }
+                            }
+                            .padding(.horizontal)
+                            Divider()
+                        }
+                    }
+                    .foregroundColor(Color("fontGray"))
+                    .frame(maxWidth:.infinity)
+                    .onAppear {
+                        fetchSubscriptions { fetchedSubscriptions in
+                            subscriptions = fetchedSubscriptions
+                            filterSubscriptionsByDate()
                         }
                     }
                 }
-                .padding()
-                .onAppear {
-                    fetchSubscriptions { fetchedSubscriptions in
-                        subscriptions = fetchedSubscriptions
-                        filterSubscriptionsByDate()
-                    }
-                }
             }
+            Spacer()
         }
         // スワイプジェスチャーの追加
         .gesture(DragGesture(minimumDistance: 50)
@@ -76,10 +132,15 @@ struct SubscriptionGraphView: View {
     }
     
     func fetchSubscriptions(completion: @escaping ([Subscription]) -> Void) {
-        var fetchedSubscriptions: [Subscription] = []
-        
-        let ref = Database.database().reference().child("subscriptions")
+        guard let currentUserId = AuthManager.shared.currentUserId else {
+            print("Error: No current user ID found.")
+            return
+        }
+
+        let ref = Database.database().reference().child("subscriptions").queryOrdered(byChild: "userId").queryEqual(toValue: currentUserId)
+
         ref.observeSingleEvent(of: .value) { snapshot in
+            var fetchedSubscriptions: [Subscription] = []
             for child in snapshot.children {
                 if let childSnapshot = child as? DataSnapshot,
                    let dict = childSnapshot.value as? [String: Any],
@@ -110,6 +171,7 @@ struct SubscriptionGraphView: View {
             completion(fetchedSubscriptions)
         }
     }
+
 
 
     func createChartData(subscriptions: [Subscription]) -> PieChartData {
@@ -185,6 +247,7 @@ struct SubscriptionGraphView: View {
             
             return false
         }
+        totalAmount = filteredSubscriptions.reduce(0) { $0 + $1.monthlyFee }
     }
 }
 
@@ -203,14 +266,19 @@ struct PieChart: UIViewRepresentable {
         let chart = PieChartView()
         chart.data = data
         
-        // エントリのラベルと値を表示する設定を追加
+        // エントリのラベルと値を表示する設定
         chart.drawEntryLabelsEnabled = true
-//        chart.drawValuesEnabled = true
-
+        
+        // Legendの設定
+        chart.legend.enabled = true
+        chart.legend.horizontalAlignment = .right
+        chart.legend.verticalAlignment = .top
+        chart.legend.orientation = .vertical
+        chart.legend.drawInside = false
+        chart.legend.form = .circle
         
         return chart
     }
-
 
     func updateUIView(_ uiView: PieChartView, context: Context) {
         uiView.data = data

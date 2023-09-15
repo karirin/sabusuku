@@ -102,64 +102,76 @@ struct CalendarView1: View {
     }()
     
     var body: some View {
-        VStack {
-            HStack{
-                Text("")
-                Spacer()
-                Text("\(selectedDateFormatter.string(from: currentCalendarPage))")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white)
-                Spacer()
-                Text("")
-            }
-            .frame(maxWidth:.infinity,maxHeight:60)
-            .background(Color("plus"))
-            .foregroundColor(Color("fontGray"))
-            let paymentDates = subscriptions.map { $0.paymentDate }
-                   
-                   CalendarView(paymentDates: paymentDates, currentCalendarPage: $currentCalendarPage, selectedDate: $selectedDate, shouldReloadData: $shouldReloadData)
-                               .frame(height: 400)
-                               .onChange(of: selectedDate) { newValue in
-                                   print("Selected date in CalendarView1: \(newValue)")
-                               }
+        NavigationView {
+            VStack {
+                HStack{
+                    Text("")
+                    Spacer()
+                    Text("\(selectedDateFormatter.string(from: currentCalendarPage))")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Text("")
+                }
+                .frame(maxWidth:.infinity,maxHeight:60)
+                .background(Color("plus"))
+                .foregroundColor(Color("fontGray"))
+                let paymentDates = subscriptions.map { $0.paymentDate }
+                
+                CalendarView(paymentDates: paymentDates, currentCalendarPage: $currentCalendarPage, selectedDate: $selectedDate, shouldReloadData: $shouldReloadData)
+                    .frame(height: 300)
+                    .onChange(of: selectedDate) { newValue in
+                        print("Selected date in CalendarView1: \(newValue)")
+                    }
                 if let date = selectedDate {
                     // 選択された日付に関連するサブスクリプションを表示する新しいセクション
                     ScrollView{
                         VStack {
                             
                             ForEach(subscriptions.filter { Calendar.current.isDate($0.paymentDate, inSameDayAs: date) }, id: \.id) { subscription in
-                                VStack{
-                                    HStack{
-                                        Text("\(subscription.serviceName)")
-                                            .font(.system(size: 30))
-                                        Spacer()
+                                NavigationLink(destination: SubscriptionDetailView(subscription: subscription)) {
+                                    VStack{
+                                        HStack{
+                                            Text("\(subscription.serviceName)")
+                                                .font(.system(size: 30))
+                                            Spacer()
+                                        }
+                                        HStack{
+                                            Spacer()
+                                            Text("の支払日です")
+                                        }
                                     }
-                                    HStack{
-                                        Spacer()
-                                        Text("の支払日です")
-                                    }
+                                    .padding()
+                                    .background(.white)
+                                    .foregroundColor(Color("fontGray"))
+                                    .cornerRadius(10)
+                                    .shadow(radius: 1)
                                 }
-                                .padding()
-                                .background(.white)
-                                .cornerRadius(10)
-                                .shadow(radius: 1)
                             }
                             .padding()
                         }
                     }
+//                    .frame(height:200)
+                }
+                Spacer()
             }
-            Spacer()
-        }
-        .frame(maxWidth: .infinity,alignment: .leading)
+            .frame(maxWidth: .infinity,alignment: .leading)
             .background(Color("sky"))  // この行を追加
-        .onAppear {
-            fetchPaymentDates()
+            .onAppear {
+                fetchPaymentDates()
+            }
         }
     }
     
 
     func fetchPaymentDates() {
-        let ref = Database.database().reference().child("subscriptions")
+        guard let currentUserId = AuthManager.shared.currentUserId else {
+            print("Error: No current user ID found.")
+            return
+        }
+
+        let ref = Database.database().reference().child("subscriptions").queryOrdered(byChild: "userId").queryEqual(toValue: currentUserId)
+
         ref.observe(.value, with: { snapshot in
             var loadedSubscriptions: [Subscription] = []
             for child in snapshot.children {
@@ -170,7 +182,7 @@ struct CalendarView1: View {
                     loadedSubscriptions.append(subscription)
                 }
             }
-            self.subscriptions = loadedSubscriptions  // ここを変更
+            self.subscriptions = loadedSubscriptions
         })
     }
 }

@@ -10,19 +10,54 @@ import Firebase
 
 struct PaymentHistoryView: View {
     @State private var updatedSubscriptions: [Subscription] = []
-
+    @Environment(\.presentationMode) var presentationMode
+    
     var body: some View {
-        List(updatedSubscriptions) { subscription in
-            VStack(alignment: .leading) {
-                ForEach(subscription.paymentHistory, id: \.self) { paymentDate in
-                    HStack{
-                        Text("\(formattedDate(from: paymentDate))")
-                        Spacer()
-                        Text("\(subscription.serviceName)を支払いました")
+        ScrollView {
+            VStack(spacing: 15) { // ここでVStackを使用して、各アイテム間にスペースを追加します。
+                ForEach(updatedSubscriptions) { subscription in
+                    VStack(alignment: .leading) {
+                        ForEach(subscription.paymentHistory, id: \.self) { paymentDate in
+                            VStack(alignment: .leading) {
+                                ForEach(subscription.paymentHistory, id: \.self) { paymentDate in
+                                    HStack{
+                                        Text("\(formattedDate(from: paymentDate))")
+                                        Spacer()
+                                        VStack{
+                                            HStack{
+                                                Text("\(subscription.serviceName)")
+                                                Spacer()
+                                            }.padding(.leading)
+                                            HStack{
+                                                Spacer()
+                                                Text("を支払いました")
+                                            }
+                                        }
+                                        .frame(maxWidth:.infinity).multilineTextAlignment(.leading)
+                                    }
+                                }
+                            }
+                        }
                     }
+                    .padding()
+                    .foregroundColor(Color("fontGray"))
+                        .frame(maxWidth: .infinity,alignment: .leading)
+                        .background(.white)
+                        .cornerRadius(8)
                 }
-            }
+                .shadow(radius: 1)
+            }.padding()
         }
+        .background(Color("sky"))
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+        }) {
+            Image(systemName: "chevron.left")
+                .foregroundColor(.black)
+            Text("戻る")
+                .foregroundColor(.black)
+        })
         .onAppear(perform: loadData)
     }
 

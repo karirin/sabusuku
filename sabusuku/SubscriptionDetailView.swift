@@ -22,6 +22,7 @@ struct SubscriptionDetailView: View {
     @State private var editedDuration: Int = 1
     @State private var editedAutoRenew: Bool = true
     @State private var editedNotes: String = ""
+    @Environment(\.presentationMode) var presentationMode
     let durations = Array(1...12)  // 1ヶ月から12ヶ月までの配列
 
     var body: some View {
@@ -63,63 +64,66 @@ struct SubscriptionDetailView: View {
                     .scrollContentBackground(.hidden)
                 }else{
                     ScrollView(.vertical, showsIndicators: false) {
-                        Group {
-                            HStack{
-                                VStack{
-                                    Text("サービス名")
-                                        .bold()
+                        VStack(spacing: 0){
+                            Group {
+                                HStack{
+                                    Text(" ")
+                                        .frame(width:10,height: 30)
+                                        .background(Color("plus"))
+                                        Text("サービス名")
+                                    Spacer()
+                                    Text(subscription.serviceName)
+                                }
+                                HStack{
+                                    Text(" ")
+                                        .frame(width:10,height: 30)
+                                        .background(Color("plus"))
+                                        Text("料金")
+                                    Spacer()
+                                    Text("\(subscription.monthlyFee)円")
+                                }
+                                HStack{
+                                    Text(" ")
+                                        .frame(width:10,height: 30)
+                                        .background(Color("plus"))
+                                        Text("支払い日")
+                                    Spacer()
+                                    Text(formattedDate(from: subscription.paymentDate))
+                                }
+                                HStack{
+                                    Text(" ")
+                                        .frame(width:10,height: 30)
+                                        .background(Color("plus"))
+                                        Text("サブスク期間")
+                                    Spacer()
+                                    Text("\(subscription.duration)")
+                                }
+                                HStack{
+                                    Text(" ")
+                                        .frame(width:10,height: 30)
+                                        .background(Color("plus"))
+                                        Text("自動更新")
+                                    Spacer()
+                                    Text("\(subscription.autoRenew ? "有" : "無")")
+                                }
+                                HStack{
+                                    VStack(alignment: .leading){
+                                        HStack{
+                                            Text(" ")
+                                                .frame(width:10,height: 30)
+                                                .background(Color("plus"))
+                                            Text("メモ")
+                                        }
+                                        .padding(.bottom)
+                                        Text("\(subscription.notes)")
+                                    }
+                                    
                                     Spacer()
                                 }
-                                Spacer()
-                                Text(subscription.serviceName)
                             }
-                            HStack{
-                                VStack{
-                                    Text("料金")
-                                        .bold()
-                                    Spacer()
-                                }
-                                Spacer()
-                                Text("\(subscription.monthlyFee)円")
-                            }
-                            HStack{
-                                VStack{
-                                    Text("支払い日")
-                                        .bold()
-                                    Spacer()
-                                }
-                                Spacer()
-                                Text(formattedDate(from: subscription.paymentDate))
-                            }
-                            HStack{
-                                VStack{
-                                    Text("サブスク期間")
-                                        .bold()
-                                    Spacer()
-                                }
-                                Spacer()
-                                Text("\(subscription.duration)")
-                            }
-                            HStack{
-                                VStack{
-                                    Text("自動更新")
-                                        .bold()
-                                    Spacer()
-                                }
-                                Spacer()
-                                Text("\(subscription.autoRenew ? "有" : "無")")
-                            }
-                            HStack{
-                                VStack{
-                                    Text("メモ")
-                                        .bold()
-                                    Spacer()
-                                }
-                                Spacer()
-                                Text("\(subscription.notes)")
-                            }
+                            .font(.system(size: 20))
+                            .padding()
                         }
-                        .padding()
                     }
                 }
             }
@@ -138,6 +142,16 @@ struct SubscriptionDetailView: View {
                     editedNotes = subscription.notes
                 }
                 isEditing.toggle()
+            }
+                .foregroundColor(.black))
+            .navigationBarBackButtonHidden(true)
+            .navigationBarItems(leading: Button(action: {
+                self.presentationMode.wrappedValue.dismiss()
+            }) {
+                Image(systemName: "chevron.left")
+                    .foregroundColor(.black)
+                Text("戻る")
+                    .foregroundColor(.black)
             })
         }
     func saveChanges() {

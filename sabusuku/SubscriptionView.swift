@@ -38,33 +38,27 @@ struct SubscriptionView: View {
                     Section(header: Text("サービス情報")) {
                         HStack{
                             Text("サービス名")
-                                .bold()
                             Spacer()
                             TextField("Netflix", text: $serviceName)
                                 .multilineTextAlignment(.trailing)
                         }
                         HStack{
                             Text("料金")
-                                .bold()
                             Spacer()
                             TextField("1980", value: $monthlyFee,formatter: NumberFormatter())
                                 .multilineTextAlignment(.trailing)
                             Text("円")
-                                .bold()
                         }
                         DatePicker("支払い日", selection: $paymentDate, displayedComponents: .date)
                             .environment(\.locale, Locale(identifier: "ja_JP"))
-                            .bold()
                         // Pickerを使用してサブスクリプションの期間を選択
                         Picker("サブスクリプションの期間", selection: $duration) {
                             ForEach(durations, id: \.self) { month in
                                 Text("\(month)ヶ月").tag(month)
                             }
-                        }.bold()
+                        }
                         
                         Toggle("自動更新", isOn: $autoRenew)
-                            .bold()
-                        
                     }
                     
                     Section(header: Text("メモ")) {
@@ -124,6 +118,7 @@ struct SubscriptionView: View {
                             
                             self.presentationMode.wrappedValue.dismiss()
                         }
+                        .foregroundColor(.black)
                     }
                 }
             }

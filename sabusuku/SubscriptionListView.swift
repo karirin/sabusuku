@@ -22,6 +22,7 @@ struct Subscription: Identifiable {
 
 struct SubscriptionListView: View {
     @State private var subscriptions: [Subscription] = []
+    @State private var sortedSubscriptionsList: [Subscription] = []
     @State private var hasNewPaymentHistory: Bool = false
     @State var showAnotherView_post: Bool = false
     @ObservedObject var authManager = AuthManager.shared
@@ -29,6 +30,15 @@ struct SubscriptionListView: View {
     @State private var selectedSubscription: Subscription?
     @State private var offset: CGFloat = 0
     @State private var isSwiped: Bool = false
+    
+    enum SortOption {
+        case nearestPaymentDate
+        case farthestPaymentDate
+        case highestFee
+        case lowestFee
+    }
+    
+    @State private var currentSortOption: SortOption = .nearestPaymentDate
     
     func formattedDate(from date: Date) -> String {
         let formatter = DateFormatter()
@@ -39,32 +49,72 @@ struct SubscriptionListView: View {
     var body: some View {
         ZStack(alignment: .trailing) {
         NavigationView {
-        ScrollView {
             VStack(alignment: .leading,spacing: 10) {
                 HStack{
+                    ZStack {
+                        Image(systemName: "bell")
+                            .foregroundColor(.black)
+                            .font(.system(size: 30))
+                        if hasNewPaymentHistory { // 新規の支払い履歴が存在する場合に表示
+                            Image(systemName: "circle.fill")
+                                .resizable()
+                                .frame(width: 15, height: 15)
+                                .foregroundColor(.red)
+                                .offset(x: 10, y: -10)
+                        }
+                    }
+                    .padding(.trailing)
+                    .opacity(0)
                     Spacer()
-                    // 他のUI要素
+                    Text("サブスクリプション一覧")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                    Spacer()
                     NavigationLink(destination: PaymentHistoryView()) {
                         ZStack {
                             Image(systemName: "bell")
-                                .foregroundColor(.black)
-                                .font(.system(size: 35))
-                            if hasNewPaymentHistory { // 新規の支払い履歴が存在する場合に表示
+                                .foregroundColor(.white)
+                                .font(.system(size: 25))
+//                            if hasNewPaymentHistory { // 新規の支払い履歴が存在する場合に表示
                                 Image(systemName: "circle.fill")
                                     .resizable()
-                                    .frame(width: 15, height: 15)
+                                    .frame(width: 10, height: 10)
                                     .foregroundColor(.red)
-                                    .offset(x: 10, y: -10)
-                            }
+                                    .offset(x: 5, y: -5)
+//                            }
                         }
                     }
+                    .padding(.trailing)
                     .onDisappear { // この修飾子を追加
                                         self.hasNewPaymentHistory = false
                                     }
                 }
-                .padding()
-                ForEach(subscriptions.indices, id: \.self) { index in
-                    let subscription = subscriptions[index]
+                .frame(maxWidth:.infinity,maxHeight:60)
+                .background(Color("plus"))
+                .foregroundColor(Color("fontGray"))
+                HStack{
+                    Spacer()
+                    Picker(selection: $currentSortOption, label: Text("Select a post")){
+                        Text("支払日が近い順").tag(SortOption.nearestPaymentDate)
+                        Text("支払日が遠い順").tag(SortOption.farthestPaymentDate)
+                        Text("料金が大きい順").tag(SortOption.highestFee)
+                        Text("料金が小さい順").tag(SortOption.lowestFee)
+                    }
+                    .accentColor(Color("fontGray"))
+                    .onChange(of: currentSortOption) { newValue in
+                        sortedSubscriptionsList = sortedSubscriptions()
+                    }
+                    .font(.system(size: 30))
+                        .overlay(
+                        RoundedRectangle(cornerRadius: 100)
+                            .stroke(.black.opacity(3), lineWidth: 1)
+                        
+                    )
+                }
+                .padding(.trailing)
+                ScrollView {
+                ForEach(sortedSubscriptionsList.indices, id: \.self) { index in
+                    let subscription = sortedSubscriptionsList[index]
                         ZStack(alignment: .trailing) {
                         NavigationLink(destination: SubscriptionDetailView(subscription: subscription)) {
                             VStack(alignment: .leading) {
@@ -76,8 +126,7 @@ struct SubscriptionListView: View {
                                     Text("支払い日: \(formattedDate(from: subscription.paymentDate))")
                                 }
                             }
-//                            .padding()
-                            .foregroundColor(.black)
+                            .foregroundColor(Color("fontGray"))
                             .frame(maxWidth: .infinity,alignment: .leading)
                             .background(.white)
                             .cornerRadius(8)
@@ -118,10 +167,9 @@ struct SubscriptionListView: View {
                         .background(Color.white)
                         .cornerRadius(10)
                         .shadow(radius: 1)
+                        .padding(.horizontal)
+                        .padding(.vertical,5)
                 }
-                .padding(.horizontal)
-                    .padding(.vertical,5)
-                    .shadow(radius: 1)
             }
         }
         .background(Color("sky"))
@@ -143,7 +191,6 @@ struct SubscriptionListView: View {
                             }).frame(width: 60, height: 60)
                                 .background(Color("plus"))
                                 .cornerRadius(30.0)
-                            //                                .shadow(color: Color(.black).opacity(0.2), radius: 8, x: 0, y: 4
                                 .shadow(radius: 5)
                                 .fullScreenCover(isPresented: $showAnotherView_post, content: {
                                     SubscriptionView()
@@ -166,12 +213,15 @@ struct SubscriptionListView: View {
                   },
                   secondaryButton: .cancel(Text("キャンセル")))
         }
-        .onAppear(perform: loadData)
+        .onAppear(perform: {
+            loadData()
+            sortedSubscriptionsList = sortedSubscriptions()
+        })
     }
     
     func deleteSubscriptionAtIndex(at offsets: IndexSet) {
         for index in offsets {
-            let subscription = subscriptions[index]
+            let subscription = sortedSubscriptionsList[index]
             deleteSubscription(subscription)
         }
     }
@@ -204,6 +254,19 @@ struct SubscriptionListView: View {
             return DateComponents(month: 12)
         default:
             return nil
+        }
+    }
+    
+    func sortedSubscriptions() -> [Subscription] {
+        switch currentSortOption {
+        case .nearestPaymentDate:
+            return subscriptions.sorted(by: { $0.paymentDate < $1.paymentDate })
+        case .farthestPaymentDate:
+            return subscriptions.sorted(by: { $0.paymentDate > $1.paymentDate })
+        case .highestFee:
+            return subscriptions.sorted(by: { $0.monthlyFee > $1.monthlyFee })
+        case .lowestFee:
+            return subscriptions.sorted(by: { $0.monthlyFee < $1.monthlyFee })
         }
     }
     
@@ -247,6 +310,7 @@ struct SubscriptionListView: View {
             }
         }
         if isUpdated {
+            print(subscription)
             saveUpdatedPaymentDate(for: subscription)
         }
     }
@@ -270,7 +334,6 @@ struct SubscriptionListView: View {
             print("ユーザーIDが取得できませんでした")
             return
         }
-        
         let ref = Database.database().reference().child("subscriptions")
         ref.observe(.value) { snapshot in
             var loadedSubscriptions: [Subscription] = []
@@ -279,25 +342,27 @@ struct SubscriptionListView: View {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
             let currentDateString = dateFormatter.string(from: currentDate)
-            
             for child in snapshot.children {
                 if let childSnapshot = child as? DataSnapshot,
                    let dict = childSnapshot.value as? [String: Any],
                    let id = UUID(uuidString: childSnapshot.key),
-                   let subscription = Subscription(from: dict, id: id),
-                   let subscriptionUserId = dict["userId"] as? String, // userIdを取得
-                   subscriptionUserId == userId { // userIdが現在のユーザーIDと一致するか確認
+                   var subscription = Subscription(from: dict, id: id) {
                     
-                    loadedSubscriptions.append(subscription) // 一致するサブスクリプションを追加
+                    updatePaymentDate(for: &subscription)
                     
-                    if let lastUpdatedDate = dict["lastUpdatedDate"] as? String, lastUpdatedDate == currentDateString {
-                        hasNewPaymentHistory = true // 新規の支払い履歴が存在する場合に変数を更新
+                    if let subscriptionUserId = dict["userId"] as? String, subscriptionUserId == userId {
+                        loadedSubscriptions.append(subscription)
+
+                        if let lastUpdatedDate = dict["lastUpdatedDate"] as? String, lastUpdatedDate == currentDateString {
+                            hasNewPaymentHistory = true
+                        }
                     }
                 }
             }
             
             DispatchQueue.main.async {
                 self.subscriptions = loadedSubscriptions
+                self.sortedSubscriptionsList = self.sortedSubscriptions() // この行を追加
             }
         }
     }
