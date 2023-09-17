@@ -48,6 +48,7 @@ struct PaymentHistoryView: View {
                 .shadow(radius: 1)
             }.padding()
         }
+        .frame(maxWidth:.infinity,maxHeight:.infinity)
         .background(Color("sky"))
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: Button(action: {

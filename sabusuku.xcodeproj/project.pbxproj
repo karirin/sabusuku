@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0E2927681CFC3532AECE36AC /* Pods_sabusuku.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C046E129300A9C5914500D /* Pods_sabusuku.framework */; };
+		260E44052AB4A65000FBB487 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 260E44042AB4A64F00FBB487 /* LoadingView.swift */; };
 		2669E4882AA775470088043E /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2669E4872AA775470088043E /* AuthManager.swift */; };
 		2669E48A2AA783DA0088043E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2669E4892AA783D90088043E /* GoogleService-Info.plist */; };
 		2669E48C2AA7869F0088043E /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2669E48B2AA7869F0088043E /* SubscriptionView.swift */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		0CFF6E5A2EEEDC0F1090F9F1 /* Pods-sabusuku.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sabusuku.debug.xcconfig"; path = "Target Support Files/Pods-sabusuku/Pods-sabusuku.debug.xcconfig"; sourceTree = "<group>"; };
 		12C046E129300A9C5914500D /* Pods_sabusuku.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_sabusuku.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		260E44042AB4A64F00FBB487 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		2669E4872AA775470088043E /* AuthManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		2669E4892AA783D90088043E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2669E48B2AA7869F0088043E /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 				2669E4872AA775470088043E /* AuthManager.swift */,
 				26C629372AAC839D0054C937 /* PrivacyView.swift */,
 				26C629362AAC839C0054C937 /* SettingView.swift */,
+				260E44042AB4A64F00FBB487 /* LoadingView.swift */,
 				26C629382AAC839D0054C937 /* TermsOfServiceView.swift */,
 				26BD448A2AA7736B00C52D0D /* Assets.xcassets */,
 				2669E4892AA783D90088043E /* GoogleService-Info.plist */,
@@ -250,6 +253,7 @@
 				26D2693B2AAC2C8C002902B0 /* PaymentHistoryView.swift in Sources */,
 				26BD44872AA7736800C52D0D /* sabusukuApp.swift in Sources */,
 				26C6293D2AAC99B20054C937 /* SubscriptionDetailView.swift in Sources */,
+				260E44052AB4A65000FBB487 /* LoadingView.swift in Sources */,
 				26C6293A2AAC839D0054C937 /* PrivacyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -75,13 +75,13 @@ struct SubscriptionListView: View {
                             Image(systemName: "bell")
                                 .foregroundColor(.white)
                                 .font(.system(size: 25))
-//                            if hasNewPaymentHistory { // 新規の支払い履歴が存在する場合に表示
+                            if hasNewPaymentHistory { // 新規の支払い履歴が存在する場合に表示
                                 Image(systemName: "circle.fill")
                                     .resizable()
                                     .frame(width: 10, height: 10)
                                     .foregroundColor(.red)
                                     .offset(x: 5, y: -5)
-//                            }
+                            }
                         }
                     }
                     .padding(.trailing)

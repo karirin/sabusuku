@@ -14,6 +14,8 @@ struct SubscriptionGraphView: View {
     @State private var currentDate: Date = Date() // 現在の日付を保持する変数
     @State private var filteredSubscriptions: [Subscription] = []
     @State private var totalAmount: Int = 0
+    @State private var chartColors: [UIColor] = []
+
     let selectedDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy年MM月" // 例: 2023年08月22日
@@ -39,71 +41,92 @@ struct SubscriptionGraphView: View {
             .frame(maxWidth:.infinity,maxHeight:60)
             .background(Color("plus"))
             
-            if subscriptions.isEmpty {
-                Text("データを読み込んでいます...")
-                    .onAppear {
-                        fetchSubscriptions { fetchedSubscriptions in
-                            subscriptions = fetchedSubscriptions
-                            filterSubscriptionsByDate()
-                        }
-                    }
-            } else if filteredSubscriptions.isEmpty {
+//            if subscriptions.isEmpty {
+//                LoadingView()
+//                    .frame(width: 100, height: 100)  // ローディングビューのサイズを設定します。
+//                    .position(x: UIScreen.main.bounds.width / 2.0, y: UIScreen.main.bounds.height / 2.4)
+//                    .frame(maxWidth:.infinity,maxHeight:.infinity)
+//                    .onAppear {
+//                        fetchSubscriptions { fetchedSubscriptions in
+//                            subscriptions = fetchedSubscriptions
+//                            filterSubscriptionsByDate()
+//                        }
+//                    }
+//            } else
+            if filteredSubscriptions.isEmpty {
                 VStack{
                     Text("\(selectedDateFormatter.string(from: currentDate))にはデータがありません")
                         .font(.system(size: 20))
                         .foregroundColor(.gray)
                         .padding()
                 }.frame(maxWidth:.infinity,maxHeight:.infinity)
-            } else {
-                PieChartView1(data: createChartData(subscriptions: subscriptions))
-                ScrollView{
-                    VStack(alignment: .leading,spacing: 5) {
-                        HStack{
-                            Image(systemName: "calendar")
-                                .foregroundColor(Color("red"))
-                                .font(.system(size: 25))
-                            Text("\(selectedDateFormatter.string(from: currentDate))")
-                                .font(.system(size: 25))
-                            Spacer()
-                            Text("合計: \(totalAmount)")
-                                .font(.system(size: 25))
-                            HStack(alignment: .bottom){
-                                Text("円")
-                                    .padding(.top,5)
-                                    .font(.system(size: 15))
-                            }
+                    .onAppear {
+                        fetchSubscriptions { fetchedSubscriptions in
+                            subscriptions = fetchedSubscriptions
+                            filterSubscriptionsByDate()
                         }
-                        .font(.system(size: 20))
-                        .foregroundColor(Color("fontGray"))
-                        .padding(.top, 10)
-                        .padding(.horizontal)
-                        Divider()
-                        ForEach(filteredSubscriptions, id: \.serviceName) { subscription in
-                            HStack {
-                                Text(subscription.serviceName)
-                                    .font(.system(size: 22))
+                    }
+            } else {
+                if !subscriptions.isEmpty && !filteredSubscriptions.isEmpty {
+                    let chartData = createChartData(subscriptions: subscriptions)
+                    PieChartView1(data: chartData)
+                    ScrollView{
+                        VStack(alignment: .leading,spacing: 5) {
+                            HStack{
+                                Image(systemName: "calendar")
+                                    .foregroundColor(Color("red"))
+                                    .font(.system(size: 25))
+                                Text("\(selectedDateFormatter.string(from: currentDate))")
+                                    .font(.system(size: 25))
                                 Spacer()
-                                Image(systemName: "yensign.circle")
-                                    .font(.system(size: 20))
-                                    .foregroundColor(Color("plus"))
-                                    Text("\(subscription.monthlyFee)")
-                                        .font(.system(size: 25))
+                                Text("合計: \(totalAmount)")
+                                    .font(.system(size: 25))
                                 HStack(alignment: .bottom){
                                     Text("円")
                                         .padding(.top,5)
                                         .font(.system(size: 15))
                                 }
                             }
+                            .font(.system(size: 20))
+                            .foregroundColor(Color("fontGray"))
+                            .padding(.top, 10)
                             .padding(.horizontal)
                             Divider()
+                            ForEach(filteredSubscriptions.indices, id: \.self) { index in
+                                let subscription = filteredSubscriptions[index]
+                                let color = chartColors.count > index ? chartColors[index] : UIColor.gray // 色の配列のサイズを超えないようにします
+                                
+                                HStack {
+                                    // ここに色を表示するビューを追加
+                                    Color(color)
+                                        .frame(width: 20, height: 20)
+                                        .cornerRadius(10)
+                                    
+                                    Text(subscription.serviceName)
+                                        .font(.system(size: 22))
+                                    Spacer()
+                                    Image(systemName: "yensign.circle")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(Color("plus"))
+                                    Text("\(subscription.monthlyFee)")
+                                        .font(.system(size: 25))
+                                    HStack(alignment: .bottom){
+                                        Text("円")
+                                            .padding(.top,5)
+                                            .font(.system(size: 15))
+                                    }
+                                }
+                                .padding(.horizontal)
+                                Divider()
+                            }
                         }
-                    }
-                    .foregroundColor(Color("fontGray"))
-                    .frame(maxWidth:.infinity)
-                    .onAppear {
-                        fetchSubscriptions { fetchedSubscriptions in
-                            subscriptions = fetchedSubscriptions
-                            filterSubscriptionsByDate()
+                        .foregroundColor(Color("fontGray"))
+                        .frame(maxWidth:.infinity)
+                        .onAppear {
+                            fetchSubscriptions { fetchedSubscriptions in
+                                subscriptions = fetchedSubscriptions
+                                filterSubscriptionsByDate()
+                            }
                         }
                     }
                 }
@@ -123,6 +146,12 @@ struct SubscriptionGraphView: View {
             }
         )
     }
+    
+    func updateChartColors(with colors: [UIColor]) -> some View {
+        chartColors = colors
+        return EmptyView()
+    }
+
     
     // Dateを"yyyy/MM"形式の文字列に変換する関数
     func formattedDate(date: Date) -> String {
@@ -182,11 +211,11 @@ struct SubscriptionGraphView: View {
         // DateFormatterのインスタンスを作成
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-        
+        print("test")
         // 選択された年月に一致するpaymentDateやpaymentHistoryを持つサブスクリプションをフィルタリング
         let filteredSubscriptions = subscriptions.filter { subscription in
             
-//            print("subscription:\(subscription)")
+            print("subscription:\(subscription)")
             let subscriptionYear = calendar.component(.year, from: subscription.paymentDate)
             let subscriptionMonth = calendar.component(.month, from: subscription.paymentDate)
             
@@ -209,6 +238,9 @@ struct SubscriptionGraphView: View {
         let dataEntries = filteredSubscriptions.map { ChartDataEntry(x: Double($0.id.hashValue), y: Double($0.monthlyFee), data: $0.serviceName) }
         let dataSet = PieChartDataSet(entries: dataEntries, label: "")
         dataSet.colors = ChartColorTemplates.material()
+        self.chartColors = dataSet.colors
+        print("chartColors:\(chartColors)")
+                print("dataSet.colors:\(dataSet.colors)")
         
         // サービス名のフォントと色を設定
         dataSet.valueFont = .systemFont(ofSize: 12)
@@ -229,7 +261,8 @@ struct SubscriptionGraphView: View {
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: currentDate)
         let currentMonth = calendar.component(.month, from: currentDate)
-        
+        print("test")
+        print(subscriptions)
         filteredSubscriptions = subscriptions.filter { subscription in
             let subscriptionYear = calendar.component(.year, from: subscription.paymentDate)
             let subscriptionMonth = calendar.component(.month, from: subscription.paymentDate)
