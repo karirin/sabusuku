@@ -12,7 +12,7 @@ import FSCalendar
 struct CalendarView: UIViewRepresentable {
     typealias UIViewType = FSCalendar
 
-    @State var paymentDates: [Date] = []
+    @Binding var paymentDates: [Date]
     @Binding var currentCalendarPage: Date
     @Binding var selectedDate: Date?
     @Binding var shouldReloadData: Bool
@@ -70,6 +70,8 @@ struct CalendarView: UIViewRepresentable {
             let calendarComponent = Calendar.current
             let dateComponents = calendarComponent.dateComponents([.year, .month, .day], from: date)
             
+            print("parent.paymentDates:\(parent.paymentDates)")
+            
             for paymentDate in parent.paymentDates {
                 let paymentDateComponents = calendarComponent.dateComponents([.year, .month, .day], from: paymentDate)
                 print("dateComponents:\(dateComponents)")
@@ -86,8 +88,9 @@ struct CalendarView: UIViewRepresentable {
 }
 
 struct CalendarView1: View {
-    @State var subscriptions: [Subscription] = []  // ここを変更
+    @State private var subscriptions: [Subscription] = []
     @State private var currentCalendarPage: Date = Date()
+    @State private var paymentDates: [Date] = []
     @State private var selectedDate: Date? = nil
     @State private var shouldReloadData: Bool = false
 
@@ -117,8 +120,8 @@ struct CalendarView1: View {
                 .background(Color("plus"))
                 .foregroundColor(Color("fontGray"))
                 let paymentDates = subscriptions.map { $0.paymentDate }
-                
-                CalendarView(paymentDates: paymentDates, currentCalendarPage: $currentCalendarPage, selectedDate: $selectedDate, shouldReloadData: $shouldReloadData)
+
+                CalendarView(paymentDates: $paymentDates, currentCalendarPage: $currentCalendarPage, selectedDate: $selectedDate, shouldReloadData: $shouldReloadData)
                     .frame(height: 300)
                     .onChange(of: selectedDate) { newValue in
                         print("Selected date in CalendarView1: \(newValue)")
